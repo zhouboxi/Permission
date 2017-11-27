@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+        <!--配置job-->
+        <bean id="jobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+            <!--注入要执行的类-->
+            <property name="targetObject" ref="myJob"/>
+            <!--注入要执行的方法-->
+            <property name="targetMethod" value="doSome"/>
+        </bean>
+        <!--配置触发器-->
+        <bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+            <!--设置job-->
+            <property name="jobDetail" ref="jobDetail"/>
+            <!--设置时间-->
+            <property name="cronExpression" value="30/5 * * * * ? *"/>
+            <!--重复执行次数-->
+            <property name="priority" value="3"/>
+        </bean>
+
+        <!--配置调度器-->
+        <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+            <!--注入触发器 可以多个-->
+            <property name="triggers">
+                <list>
+                    <ref bean="cronTrigger"/>
+                </list>
+            </property>
+        </bean>
+</beans>

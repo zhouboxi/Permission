@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>项目管理系统 </title>
+    <link rel="stylesheet" rev="stylesheet" href="../css/style.css" type="text/css" media="all"/>
+    <script type="text/javascript" src="../../js/jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="../../js/uploadPreView.js" ></script>
+    <script language="JavaScript" type="text/javascript">
+        function tishi() {
+            var a = confirm('数据库中保存有该人员基本信息，您可以修改或保留该信息。');
+            if (a != true) return false;
+            window.open("冲突页.htm", "", "depended=0,alwaysRaised=1,width=800,height=400,location=0,menubar=0,resizable=0,scrollbars=0,status=0,toolbar=0");
+        }
+
+        function check() {
+            document.getElementById("aa").style.display = "";
+        }
+
+        function link() {
+//            alert('保存成功！');
+//            document.getElementById("fom").action = "xuqiumingxi.htm";
+//            document.getElementById("fom").submit();
+            var formData = new FormData();
+            formData.append("loginName",$("#loginName").val());
+            formData.append("loginPwd",$("#loginPwd").val());
+            formData.append("realName",$("#realName").val());
+            formData.append("email",$("#email").val());
+            formData.append("userStatus",$("#userStatus").select().val());
+            formData.append("loginPwd",$("#loginPwd").select().val());
+            formData.append("roleId",$("#role").select().val());
+            formData.append("deptNo",$("#deptno").select().val());
+            formData.append("userDesc",$("#userDesc").val());
+            formData.append("file",$("#file")[0].files[0]);
+
+
+            var setting={
+                data:formData,
+                dataType:"JSON",
+                type:"POST",
+                cache: false,
+                contentType: false,
+                processData: false,
+                success:function (data) {
+                    if(data.state==1){
+                        alert("保存成功!")
+                    }
+                }
+            }
+            $.ajax("/user/addUser",setting)
+        }
+        $(function () {
+            var settingd={
+                dataType:"JSON",
+                type:"GET",
+                success:function (data) {
+                    if(data.state==1){
+                        var c=$("#deptno").find("option");
+                        for (var i = 1; i <c.length; i++) {
+                            c[i].remove();
+                        }
+                        var res=data.response;
+                        for (var i = 0; i < res.length; i++) {
+                            $("#deptno").append($("<option/>").attr("value",res[i].deptNo).text(res[i].dName));
+                        }
+                    }
+                }
+            }
+            var settingr={
+                dataType:"JSON",
+                type:"GET",
+                success:function (data) {
+                    if(data.state==1){
+                        var c=$("#role").find("option");
+                        for (var i = 1; i <c.length; i++) {
+                            c[i].remove();
+                        }
+                        var res=data.response;
+                        for (var i = 0; i < res.length; i++) {
+                            $("#role").append($("<option/>").attr("value",res[i].roleId).text(res[i].roleCn));
+                        }
+                    }
+                }
+            }
+
+            $.ajax("/dept/findAll",settingd);
+            $.ajax("/role/findAll",settingr);
+            //图片上传预览
+            new uploadPreview({ UpBtn: "file", DivShow: "imgdiv", ImgShow: "imgShow" });
+        })
+
+    </script>
+    <style type="text/css">
+        <!--
+        .atten {
+            font-size: 12px;
+            font-weight: normal;
+            color: #F00;
+        }
+        -->
+    </style>
+</head>
+
+<body class="ContentBody">
+<form enctype="multipart/form-data"  method="post" name="fom" id="fom">
+    <div class="MainDiv">
+        <table width="99%" border="0" cellpadding="0" cellspacing="0" class="CContent">
+            <tr>
+                <th class="tablestyle_title">用户添加页面</th>
+            </tr>
+            <tr>
+                <td class="CPanel">
+                    <table border="0" cellpadding="0" cellspacing="0" style="width:100%">
+                        <tr>
+                            <td width="100%">
+                                <fieldset style="height:100%;">
+                                    <legend>添加任务</legend>
+                                    <table border="0" cellpadding="2" cellspacing="1" style="width:100%">
+
+                                        <tr>
+                                            <td nowrap align="right" width="13%">登录名:</td>
+                                            <td width="41%">
+                                                <input name="loginName"  id="loginName"  style="width:154px" type="text" size="40"/>
+                                                <span class="red"> *</span>
+                                            </td>
+                                            <td align="right" width="19%">密码:</td>
+                                            <td width="27%">
+                                                <input name="loginPwd" id="loginPwd" type="password" style="width:154px"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td nowrap align="right">真实姓名:</td>
+                                            <td>
+                                                <input name="realName" type="text" id="realName"  style="width:154px"/>
+                                            </td>
+                                            <td align="right">邮箱:</td>
+                                            <td>
+                                                <input name="email" type="text" id="email" style="width:154px"/>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td nowrap align="right">状态:</td>
+                                            <td><select id="userStatus">
+                                                <option value="0">活动</option>
+                                                <option value="1">删除</option>
+                                                <option value="2">休眠</option>
+                                            </select></td>
+                                            <td align="right">部门:</td>
+                                            <td><select id="deptno">
+                                                <option selected="selected">==请选择==</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td nowrap align="right" width="13%">上传头像:</td>
+                                            <td width="41%" >
+                                                <input name="file" id="file"  style="width:154px" type="file" size="40"/>
+                                                <div id="imgdiv"><img id="imgShow" width="60" height="60"/></div>
+                                            </td>
+                                            <td align="right">角色:</td>
+                                            <td>
+                                                <select id="role">
+                                                    <option selected="selected">==请选择==</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td nowrap align="right" height="120px">具体描述:</td>
+                                            <td colspan="3">
+                                                <textarea id="userDesc" name="userDesc" rows="5" cols="80"></textarea>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <br/>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center" height="50px">
+                    <input type="button" name="Submit" value="保存" class="button" onclick="link();"/>　
+                    <input type="button" name="Submit2" value="返回" class="button" onclick="window.history.go(-1);"/>
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>
+</body>
+</html>

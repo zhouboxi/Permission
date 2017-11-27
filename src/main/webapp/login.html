@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="/js/jquery-3.2.1.js"></script>
+<title>项目管理系统</title>
+  <script type="text/javascript">
+      $(function(){
+          $('#kaptchaImage').click(function () {//生成验证码
+              $(this).hide().attr('src', '/kaptcha/getKaptchaImage.do?' + Math.floor(Math.random()*100) ).fadeIn();
+              event.cancelBubble=true;
+          });
+      });
+
+
+      window.onbeforeunload = function(){
+          //关闭窗口时自动退出
+          if(event.clientX>360 && event.clientY <0||event.altKey){
+              alert(parent.document.location);
+          }
+      };
+
+
+      function changeCode() {
+          $('#kaptchaImage').hide().attr('src', '/kaptcha/getKaptchaImage.do?' + Math.floor(Math.random()*100) ).fadeIn();
+          event.cancelBubble=true;
+          return false;
+      }
+  </script>
+  <style type="text/css">
+<!--
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+-->
+</style>
+<link href="/css/css.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="147" background="/images/top02.gif"><img src="/images/top03.gif" width="776" height="147" /></td>
+  </tr>
+</table>
+<table width="562" border="0" align="center" cellpadding="0" cellspacing="0" class="right-table03">
+  <tr>
+    <td width="221"><table width="95%" border="0" cellpadding="0" cellspacing="0" class="login-text01">
+      
+      <tr>
+        <td><table width="100%" border="0" cellpadding="0" cellspacing="0" class="login-text01">
+          <tr>
+            <td align="center"><img src="/images/ico13.gif" width="107" height="97" /></td>
+          </tr>
+          <tr>
+            <td height="40" align="center">&nbsp;</td>
+          </tr>
+          
+        </table></td>
+        <td><img src="/images/line01.gif" width="5" height="292" /></td>
+      </tr>
+    </table></td>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="31%" height="35" class="login-text02">用户名称：<br /></td>
+        <td width="69%"><input name="textfield" id="name" type="text" size="24" />
+          <span id="msg" style="color: red"></span></td>
+      </tr>
+      <tr>
+        <td height="35" class="login-text02">密　码：<br /></td>
+        <td><input name="textfield2" id="password" type="password" size="24" /></td>
+      </tr>
+      <tr>
+        <td height="35" class="login-text02">验证图片：<br /></td>
+        <td><img src="/kaptcha/getKaptchaImage.do" id="kaptchaImage" width="109" height="40" /><a href="#" class="login-text03" onclick="changeCode();">看不清?换一张</a></td>
+      </tr>
+      <tr>
+        <td height="35" class="login-text02">请输入验证码：</td>
+        <td><input name="textfield3" id="num" type="text" size="24" /></td>
+      </tr>
+      <tr>
+        <td height="35">&nbsp;</td>
+        <td><input name="Submit2" type="submit" class="right-button01" value="确认登陆" onclick="sub();" />
+          <input name="Submit232" type="submit" class="right-button02" value="重 置" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+      <script type="text/javascript">
+        function sub() {
+            var user={
+                name:$("#name").val(),
+                password:$("#password").val(),
+                num:$("#num").val()
+            }
+            var setting={
+                data:user,
+                type:"POST",
+                dataType:"JSON",
+                success:function (data) {
+                    if(data.state==1){
+                        window.location.href="/index.html"
+                    }
+                    $("#msg").text(data.msg);
+                }
+              
+            }
+            $.ajax("http://localhost:8888/user/login",setting);
+        }
+      </script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>项目管理系统 </title>
+<style type="text/css">
+<!--
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	background-image: url(../images/left.gif);
+}
+-->
+</style>
+<link href="../css/css.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../js/jquery-3.2.1.js"></script>
+<script type="text/javascript">
+	$(function () {
+	    var setting={
+	        type:"GET",
+			dataType:"JSON",
+			success:function (data) {
+				if(data.state==1){
+				    var res=data.responseOne;
+				    $(".left-font02").eq(0).text(res.loginName);
+				    create(res);
+				}else{
+                    window.location.href="/login.html"
+				}
+            }
+		}
+		$.ajax("http://localhost:8888/user/check",setting);
+    });
+	function create(data) {
+	    var pri=data.role.priviliages;
+        for (var i = 0; i < pri.length; i++) {
+            if(pri[i].parentId==0){
+				$("#td").append($("<table width='100%' border='0' cellpadding='0' cellspacing='0' class='left-table03'></table>")
+					.append($("<tr/>").append($("<td height='29'></td>").
+					append($("<table width='85%' border='0' align='center' cellpadding='0'cellspacing='0'></table>")
+						.append($("<tr/>").append($("<td width='8%'></td>").append($("<img  src='../images/ico04.gif' width='8' height='11' />").attr("name","img"+i).attr("id","img"+i)))
+							.append($("<td width='92%'>")
+                                .append($("<a href='javascript:(void)' target='mainFrame' class='left-font03'></a>").attr("onClick","list("+i+")").text(pri[i].priName))))))));
+
+                $("#td").append($("<table  style='DISPLAY: none' width='80%' border='0' align='center' cellpadding='0' cellspacing='0' class='left-table02'>").attr("id",'subtree'+i));
+                for (var j = 0; j < pri.length; j++) {
+                    if(pri[i].priId==pri[j].parentId){
+                        $("#subtree"+i) .append($("<tr>")
+                            .append($("<td width='9%' height='20'></td>").append($("<img  src='../images/ico06.gif' width='8' height='12' />").attr("id","xiaotu"+j)))
+                            .append($(" <td width='91%'></td>").append($("<a  target='mainFrame' class='left-font03'></a>").attr("onClick","tupian("+j+")").text(pri[j].priName).attr("href",pri[j].url))));
+                    }
+                }
+
+            }
+
+
+
+        }
+
+
+    }
+
+</script>
+</head>
+<SCRIPT language=JavaScript>
+function tupian(idt){
+    var nametu="xiaotu"+idt;
+    var tp = document.getElementById(nametu);
+    tp.src="../images/ico05.gif";//图片ico04为白色的正方形
+	
+	for(var i=1;i<30;i++)
+	{
+	  
+	  var nametu2="xiaotu"+i;
+	  if(i!=idt*1)
+	  {
+	    var tp2=document.getElementById('xiaotu'+i);
+		if(tp2!=undefined)
+	    {tp2.src="../images/ico06.gif";}//图片ico06为蓝色的正方形
+	  }
+	}
+}
+
+function list(idstr){
+	var name1="subtree"+idstr;
+	var name2="img"+idstr;
+	var objectobj=document.all(name1);
+	var imgobj=document.all(name2);
+
+
+	//alert(imgobj);
+
+	if(objectobj.style.display=="none"){
+		for(i=1;i<10;i++){
+			var name3="img"+i;
+			var name="subtree"+i;
+			var o=document.all(name);
+			if(o!=undefined){
+				o.style.display="none";
+				var image=document.all(name3);
+				//alert(image);
+				image.src="../../images/ico04.gif";
+			}
+		}
+		objectobj.style.display="";
+		imgobj.src="../../images/ico03.gif";
+	}
+	else{
+		objectobj.style.display="none";
+		imgobj.src="../../images/ico04.gif";
+	}
+}
+
+</SCRIPT>
+
+<body>
+<table width="198" border="0" cellpadding="0" cellspacing="0" class="left-table01">
+  <tr>
+    <td id="td">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		  <tr>
+			<td width="207" height="55" background="../images/nav01.gif">
+				<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0">
+				  <tr>
+					<td width="25%" rowspan="2"><img src="../images/ico02.gif" width="35" height="35" /></td>
+					<td width="75%" height="22" class="left-font01">您好，<span class="left-font02">king</span></td>
+				  </tr>
+				  <tr>
+					<td height="22" class="left-font01">
+						[&nbsp;<a href="/user/logout" target="_top" class="left-font01">退出</a>&nbsp;]</td>
+				  </tr>
+				</table>
+			</td>
+		  </tr>
+		</table>
+
+	  </td>
+  </tr>
+  
+</table>
+</body>
+</html>

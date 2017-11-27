@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxlg.app.dao.RoleDao">
+
+
+    <select id="findById" parameterType="java.lang.Integer" resultMap="roleMap">
+        select roleid,role_cn,role_en,role_desc,role_status
+        from role where roleid=#{roleId} and role_status=0
+    </select>
+
+    <select id="findAll" resultMap="roleMaps">
+         select roleid,role_cn,role_en,role_desc,role_status from role
+         where role_status=0
+    </select>
+
+
+
+
+    <resultMap id="roleMap" type="Role">
+        <id property="roleId" column="roleid" />
+        <result property="roleCn" column="role_cn"/>
+        <result property="roleEn" column="role_en"/>
+        <result property="roleDesc" column="role_desc"/>
+        <result property="roleStatus" column="role_status"/>
+        <collection property="priviliages" column="roleid" javaType="java.util.List" ofType="Priviliage" select="com.jxlg.app.dao.PriviliageDao.findById"/>
+    </resultMap>
+    <resultMap id="roleMaps" type="Role">
+        <id property="roleId" column="roleid" />
+        <result property="roleCn" column="role_cn"/>
+        <result property="roleEn" column="role_en"/>
+        <result property="roleDesc" column="role_desc"/>
+        <result property="roleStatus" column="role_status"/>
+    </resultMap>
+    
+</mapper>

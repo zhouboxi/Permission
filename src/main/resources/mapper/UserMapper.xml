@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxlg.app.dao.UserDao">
+    <cache eviction="LRU" type="com.jxlg.app.redis.RedisCache"/>
+    <sql id="userSome">
+        userid,loginname,loginpwd,realname,email,user_desc
+        ,user_status,picpath
+    </sql>
+    <!--通过名字找对象-->
+    <resultMap id="userMap" type="User">
+        <id property="userId" column="userid"/>
+        <result property="loginName" column="loginname"/>
+        <result property="loginPwd" column="loginpwd"/>
+        <result property="realName" column="realname"/>
+        <result property="email" column="email"/>
+        <result property="userDesc" column="user_desc"/>
+        <result property="userStatus" column="user_status"/>
+        <result property="picPath" column="picpath"/>
+        <association property="role" column="roleid" select="com.jxlg.app.dao.RoleDao.findById"/>
+        <association property="dept" column="deptno" select="com.jxlg.app.dao.DeptDao.findById"/>
+    </resultMap>
+    
+    <select id="findByName" parameterType="java.lang.String" resultMap="userMap">
+        select <include refid="userSome"/> ,roleid from users where loginname=#{name} and user_status=0
+    </select>
+
+    <select id="findAll" resultMap="userMap">
+        select <include refid="userSome"/> ,deptno from users where  user_status=0  limit #{start},#{pageSize}
+    </select>
+
+    <select id="getCount"  resultType="java.lang.Integer">
+        select count(userid) from users where  user_status=0
+    </select>
+
+    <insert id="save" parameterType="user">
+        insert into users(<include refid="userSome"/> ,deptno,roleid) values(
+            #{userId},#{loginName},#{loginPwd},#{realName},#{email},
+            #{userDesc},#{userStatus},#{picPath},#{dept.deptNo},#{role.roleId}
+        )
+    </insert>
+
+</mapper>
